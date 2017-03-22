@@ -32,16 +32,29 @@ public class EmpirMain {
     private String[] options = {"1", "2", "3", "4", "5"};
     private String[] elementEnter;
     private int elemInForm;
-
+    public boolean needsDouble;
+    
+    /**Constructor to call the prepareGui method and launch application
+     * 
+     */
     public EmpirMain() {
         prepareGui();
     }
-
+    
+    /**Main method for class
+     * 
+     * @param args
+     * @return nothing
+     */
     public static void main(String[] args) {
         EmpirMain empirSolver = new EmpirMain();
         empirSolver.welcome();
     }
-
+    
+    /**Prepares the Gui elements for the application.  Adds the basic
+     * components to the panels.
+     * 
+     */
     private void prepareGui() {
         headerLabel1 = new JLabel("Empirical Formula Calculator", JLabel.CENTER);
         headerLabel1.setFont(new Font(headerLabel1.getFont().getName(), Font.PLAIN, 30));
@@ -82,11 +95,8 @@ public class EmpirMain {
         controlPanel.setLayout(new FlowLayout());
 
         mainFrame.add(headerLabel);
-        // mainFrame.add(element1);
-        // mainFrame.add(element2);
 
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // mainFrame.setVisible(true);
 
         instructions = new JFrame("Instructions for Calculating Empirical");
         instructions.setSize(700, 700);
@@ -94,7 +104,11 @@ public class EmpirMain {
         instructions.setLayout(new BorderLayout());
 
     }
-
+    
+    /**Prepares the text for the multiple screens in the application
+     * as well as populates the multiple components on the Main screen.
+     * 
+     */
     private void prepareText() {
         elementEnter = new String[elemInForm];
         elemPercsVals = new float[elemInForm];
@@ -151,6 +165,7 @@ public class EmpirMain {
         // Action Listener for Button Click
         calcButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	needsDouble = false;
                 redo = false;
                 try {
                     for (JTextField field : elemEn) {
@@ -189,6 +204,7 @@ public class EmpirMain {
                                 elementEnter[i] = Element.toCorrectSymbol(elemEn[i].getText());
 
                             }
+                            //Catches exception if the entered value doesn't match an element
                         } catch (IllegalArgumentException err) {
                             statusLabel.setText("Please enter correct symbols");
                             redo = true;
@@ -203,6 +219,7 @@ public class EmpirMain {
                                 elemVals[3][i] = FormulaCollect.findSmallest(elemVals[2]);
                                 elemVals[4][i] = FormulaCollect.finalWrapup(elemVals[2][i], elemVals[3][i]);
                             }
+                            elemVals[4] = FormulaCollect.fixFormat(elemVals[4]);
 
                             String displayText = "<html>";
                             for (int i = 0; i < elemInForm; i++) {
@@ -226,12 +243,14 @@ public class EmpirMain {
                     } else {
 
                     }
-
+                    //Catches an exception if a value is not entered.
                 } catch (NumberFormatException ex) {
                     statusLabel.setText("Please enter all values or change number of elements");
                 }
             }
         });
+        
+        //Returns to the element screen.
         JButton back = new JButton("Return to Number of Elements");
         back.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -240,7 +259,8 @@ public class EmpirMain {
                 welcome();
             }
         });
-
+        
+        //Show the calculations used to get to the result
         JButton goToInstr = new JButton("Show Calculations");
         goToInstr.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -278,7 +298,10 @@ public class EmpirMain {
 
     }
 
-
+/** Method to render the JTable for the display to show instructions
+ * used to get to the result
+ * 
+ */
     public void giveInstructions() {
         String[] columnNames = new String[]{"Atom", "Percent", "Molar Mass", "Divide by Molar Mass", "Divide by Smallest Moles",
             "Coefficient"};
@@ -304,10 +327,4 @@ public class EmpirMain {
         instructions.setVisible(true);
     }
 
-    public int[][] append(Object[][] a, float[][] b) {
-        int[][] result = new int[a.length + b.length][];
-        System.arraycopy(a, 0, result, 0, a.length);
-        System.arraycopy(b, 0, result, a.length, b.length);
-        return result;
-    }
 }
